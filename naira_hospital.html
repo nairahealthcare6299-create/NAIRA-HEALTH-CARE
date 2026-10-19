@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAIRA HEALTH CARE - Hospital Management System</title>
+    <style>
+        :root {
+            --primary-color: #0284c7;
+            --secondary-color: #0369a1;
+            --bg-color: #f0f9ff;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --border-color: #cbd5e1;
+            --success-color: #16a34a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+        }
+
+        /* Hospital Main Header */
+        .hospital-banner {
+            text-align: center;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .hospital-banner h1 { font-size: 28px; letter-spacing: 1px; }
+        .hospital-banner p { font-size: 14px; opacity: 0.9; margin-top: 5px; }
+
+        /* Login & Forgot Section */
+        #login-section, #forgot-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 75vh;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-card h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container span {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn:hover { background-color: var(--secondary-color); }
+        .link-btn { background: none; border: none; color: var(--primary-color); cursor: pointer; text-decoration: underline; margin-top: 10px; width: 100%; text-align: center; font-size: 14px; }
+
+        .error-msg { color: #ef4444; margin-top: 10px; text-align: center; font-size: 13px; }
+
+        /* Dashboard Section */
+        #dashboard-section { display: none; }
+
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .logout-btn { background-color: #ef4444; width: auto; padding: 8px 15px; }
+        .logout-btn:hover { background-color: #dc2626; }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: #e0f2fe;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Stats & Analytics */
+        .stats-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-card h4 { font-size: 13px; color: #64748b; }
+        .stat-card p { font-size: 20px; font-weight: bold; color: var(--primary-color); margin-top: 5px; }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        @media (max-width: 950px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card h3 { margin-bottom: 15px; color: var(--secondary-color); border-bottom: 2px solid var(--bg-color); padding-bottom: 8px; font-size: 16px; }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        /* Test Box Styling */
+        .test-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .test-box label.checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+        .test-inputs {
+            display: none;
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; text-align: left; font-size: 13px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #e0f2fe; color: #0369a1; }
+
+        .doc-thumb-container { display: flex; gap: 5px; flex-wrap: wrap; }
+        .prescription-img-thumb { width: 35px; height: 35px; border-radius: 4px; object-fit: cover; border: 1px solid #cbd5e1; cursor: pointer; }
+
+        .action-btns button { padding: 5px 8px; margin-right: 3px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; margin-bottom: 3px; font-weight: bold; }
+        .btn-print { background-color: #0d9488; color: white; }
+        .btn-visit { background-color: #0284c7; color: white; }
+        .btn-delete { background-color: #ef4444; color: white; }
+
+        /* Badge for Expiry Status */
+        .badge-valid { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-expired { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+
+        /* Print Styling */
+        @media print {
+            body { background: white; padding: 0; }
+            .hospital-banner { background: #0284c7 !important; -webkit-print-color-adjust: exact; }
+            .auth-card, .header-actions, .tabs, #form-card, .action-btns, .logout-btn { display: none !important; }
+            .main-grid, .tab-content.active { display: block !important; }
+            .card { box-shadow: none; border: 1px solid #cbd5e1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Hospital Main Header -->
+        <div class="hospital-banner">
+            <h1>🏥 NAIRA HEALTH CARE</h1>
+            <p>Advanced OPD, Multiple Document Upload & Multi-Visit Billing System</p>
+        </div>
+
+        <!-- LOGIN SECTION -->
+        <div id="login-section">
+            <div class="auth-card">
+                <h2>Admin Login</h2>
+                <div class="form-group">
+                    <label>Admin Name</label>
+                    <input type="text" id="login-name" placeholder="NAIRA">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-container">
+                        <input type="password" id="login-pass" placeholder="Password">
+                        <span onclick="togglePassword('login-pass', this)">👁️</span>
+                    </div>
+                </div>
+                <button class="btn" onclick="handleLogin()">Login</button>
+                <button class="link-btn" onclick="showForgot()">Forgot Password?</button>
+                <div id="login-error" class="error-msg"></div>
+            </div>
+        </div>
+
+        <!-- FORGOT PASSWORD SECTION -->
+        <div id="forgot-section" style="display: none;">
+            <div class="auth-card">
+                <h2>Reset Password</h2>
+                <div class="form-group">
+                    <label>Admin Name</label>
+                    <input type="text" id="forgot-name" placeholder="NAIRA">
+                </div>
+                <div class="form-group">
+                    <label>Registered Mobile Number</label>
+                    <input type="text" id="forgot-mobile" placeholder="6299824039">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="new-pass" placeholder="Enter new password">
+                </div>
+                <button class="btn" onclick="resetPassword()">Update Password</button>
+                <button class="link-btn" onclick="showLogin()">Back to Login</button>
+                <div id="forgot-msg" class="error-msg"></div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard-section">
+            <div class="dash-header">
+                <span id="welcome-admin" style="font-weight: bold; color: var(--secondary-color);"></span>
+                <div class="header-actions">
+                    <button class="btn print-btn" onclick="window.print()" style="background-color: #0d9488; width: auto; padding: 8px 15px;">🖨️ Print Report</button>
+                    <button class="btn logout-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('tab-patients', this)">👥 Patient Records & Visits</button>
+                <button class="tab-btn" onclick="switchTab('tab-analytics', this)">📈 Revenue & Analytics</button>
+                <button class="tab-btn" onclick="switchTab('tab-staff', this)">👨‍⚕️ Staff & Hospital Info</button>
+            </div>
+
+            <!-- TAB 1: PATIENTS -->
+            <div id="tab-patients" class="tab-content active">
+                <div class="stats-box">
+                    <div class="stat-card"><h4>Total Visits Recorded</h4><p id="stat-total">0</p></div>
+                    <div class="stat-card"><h4>Admitted Patients</h4><p id="stat-admit">0</p></div>
+                    <div class="stat-card"><h4>OPD / Non-Admit</h4><p id="stat-nonadmit">0</p></div>
+                    <div class="stat-card"><h4>Total Revenue</h4><p id="stat-rev">₹0</p></div>
+                </div>
+
+                <div class="main-grid">
+                    <!-- New Patient Form -->
+                    <div class="card" id="form-card">
+                        <h3 id="form-title">New Patient Entry</h3>
+                        <form id="patient-form" onsubmit="savePatient(event)">
+                            <input type="hidden" id="edit-patient-id" value="">
+                            
+                            <div class="form-group">
+                                <label>Patient Full Name <span style="color:red;">*</span></label>
+                                <input type="text" id="p-name" required placeholder="Mandatory Name" onblur="checkPatientHistory()">
+                            </div>
+                            
+                            <!-- 15-Day Status Notification Box -->
+                            <div id="patient-history-alert" style="display:none; padding:10px; margin-bottom:12px; border-radius:6px; font-size:13px; font-weight:bold;"></div>
+
+                            <div class="form-group">
+                                <label>Patient Address <span style="color:red;">*</span></label>
+                                <input type="text" id="p-address" required placeholder="Mandatory Village / City">
+                            </div>
+                            <div class="form-group">
+                                <label>Entry Date & Time</label>
+                                <input type="datetime-local" id="p-entry-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Prescriptions / Reports (Select up to 10+ photos)</label>
+                                <input type="file" id="p-documents" accept="image/*" multiple>
+                                <small style="color: #64748b;">Aap ek sath multiple files select kar sakte hain.</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Assigned Staff & Mobile</label>
+                                <select id="p-staff" required>
+                                    <option value="">-- Select Active Staff --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Admission Status</label>
+                                <select id="p-admit-status" onchange="toggleAdmitDates()">
+                                    <option value="Non-Admit">Non-Admit (OPD)</option>
+                                    <option value="Admit">Admitted</option>
+                                </select>
+                            </div>
+                            <div id="admit-dates-box" style="display: none;">
+                                <div class="form-group">
+                                    <label>Admit From Date & Time</label>
+                                    <input type="datetime-local" id="p-date-from">
+                                </div>
+                                <div class="form-group">
+                                    <label>Admit To Date & Time (Discharge)</label>
+                                    <input type="datetime-local" id="p-date-to">
+                                </div>
+                            </div>
+
+                            <!-- Vitals Form -->
+                            <div class="card" style="background:#f8fafc; padding:10px; margin-bottom:15px;">
+                                <label style="font-weight:bold; margin-bottom:8px; display:block; color:var(--secondary-color);">Patient Vitals Check</label>
+                                <div class="vitals-grid">
+                                    <div class="form-group"><label>BP</label><input type="text" id="v-bp" placeholder="120/80"></div>
+                                    <div class="form-group"><label>Pulse</label><input type="text" id="v-pulse" placeholder="72 bpm"></div>
+                                    <div class="form-group"><label>SpO2</label><input type="text" id="v-spo2" placeholder="98%"></div>
+                                    <div class="form-group"><label>Weight</label><input type="text" id="v-weight" placeholder="65 kg"></div>
+                                    <div class="form-group"><label>Temp</label><input type="text" id="v-temp" placeholder="98.6°F"></div>
+                                </div>
+                            </div>
+
+                            <!-- Diagnostic Tests & Blood Test Section -->
+                            <div class="card" style="background:#f8fafc; padding:10px; margin-bottom:15px;">
+                                <label style="font-weight:bold; margin-bottom:8px; display:block; color:var(--secondary-color);">Diagnostic Tests & Blood Test Billing</label>
+                                
+                                <!-- Blood Test -->
+                                <div class="test-box" style="border: 2px solid #0284c7; background: #f0f9ff;">
+                                    <label class="checkbox-label"><input type="checkbox" id="chk-blood" onclick="toggleTestInputs('blood')"> 🩸 Blood Test (Special)</label>
+                                    <div id="inputs-blood" class="test-inputs" style="display:none;">
+                                        <input type="text" id="loc-blood" placeholder="Kahan hua? (Lab/Room)">
+                                        <input type="number" id="cost-blood" placeholder="Blood Test Paisa (₹)" min="0" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- Ultrasound -->
+                                <div class="test-box">
+                                    <label class="checkbox-label"><input type="checkbox" id="chk-ultrasound" onclick="toggleTestInputs('ultrasound')"> Ultrasound</label>
+                                    <div id="inputs-ultrasound" class="test-inputs" style="display:none;">
+                                        <input type="text" id="loc-ultrasound" placeholder="Kahan hua? (Lab/Room)">
+                                        <input type="number" id="cost-ultrasound" placeholder="Kitna paisa laga? (₹)" min="0" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- X-Ray -->
+                                <div class="test-box">
+                                    <label class="checkbox-label"><input type="checkbox" id="chk-xray" onclick="toggleTestInputs('xray')"> X-Ray</label>
+                                    <div id="inputs-xray" class="test-inputs" style="display:none;">
+                                        <input type="text" id="loc-xray" placeholder="Kahan hua? (Lab/Room)">
+                                        <input type="number" id="cost-xray" placeholder="Kitna paisa laga? (₹)" min="0" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- CT Scan -->
+                                <div class="test-box">
+                                    <label class="checkbox-label"><input type="checkbox" id="chk-ct" onclick="toggleTestInputs('ct')"> CT Scan</label>
+                                    <div id="inputs-ct" class="test-inputs" style="display:none;">
+                                        <input type="text" id="loc-ct" placeholder="Kahan hua? (Lab/Room)">
+                                        <input type="number" id="cost-ct" placeholder="Kitna paisa laga? (₹)" min="0" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- MRI -->
+                                <div class="test-box">
+                                    <label class="checkbox-label"><input type="checkbox" id="chk-mri" onclick="toggleTestInputs('mri')"> MRI</label>
+                                    <div id="inputs-mri" class="test-inputs" style="display:none;">
+                                        <input type="text" id="loc-mri" placeholder="Kahan hua? (Lab/Room)">
+                                        <input type="number" id="cost-mri" placeholder="Kitna paisa laga? (₹)" min="0" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- ECG -->
+                                <div class="test-box">
+                                    <label class="checkbox-label"><input type="checkbox" id="chk-ecg" onclick="toggleTestInputs('ecg')"> ECG</label>
+                                    <div id="inputs-ecg" class="test-inputs" style="display:none;">
+                                        <input type="text" id="loc-ecg" placeholder="Kahan hua? (Lab/Room)">
+                                        <input type="number" id="cost-ecg" placeholder="Kitna paisa laga? (₹)" min="0" value="0">
+                                    </div>
+                                </div>
+
+                                <!-- Urine Test -->
+                                <div class="test-box">
+                                    <label class="checkbox-label"><input type="checkbox" id="chk-urine" onclick="toggleTestInputs('urine')"> Urine Test</label>
+                                    <div id="inputs-urine" class="test-inputs" style="display:none;">
+                                        <input type="text" id="loc-urine" placeholder="Kahan hua? (Lab/Room)">
+                                        <input type="number" id="cost-urine" placeholder="Kitna paisa laga? (₹)" min="0" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Consulting Doctor Name</label>
+                                <input type="text" id="p-doctor" required placeholder="Dr. Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Doctor Fees Paid (₹)</label>
+                                <input type="number" id="p-fees" value="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Medicine Expense (₹)</label>
+                                <input type="number" id="p-med" value="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Hospital Maintenance Expense (₹)</label>
+                                <input type="number" id="p-maint" value="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Discharge Summary / Notes</label>
+                                <textarea id="p-summary" rows="2" placeholder="Write treatment & discharge details..."></textarea>
+                            </div>
+                            <button type="submit" class="btn" id="form-submit-btn">Save & Print Record</button>
+                            <button type="button" class="btn" id="form-cancel-btn" style="background:#64748b; margin-top:8px; display:none;" onclick="cancelEditMode()">Cancel Edit</button>
+                        </form>
+                    </div>
+
+                    <!-- Patient Lists Tables -->
+                    <div>
+                        <div class="card">
+                            <h3>🛏️ Admitted Patients Record</h3>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Documents (10+)</th>
+                                            <th>Name & Address</th>
+                                            <th>Visit Date / Expiry</th>
+                                            <th>Doctor / Staff</th>
+                                            <th>Tests & Blood Details</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admitted-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>🏥 Non-Admitted (OPD) Patients Record</h3>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Documents (10+)</th>
+                                            <th>Name & Address</th>
+                                            <th>Visit Date / Expiry</th>
+                                            <th>Doctor / Staff</th>
+                                            <th>Tests & Blood Details</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="non-admitted-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: ANALYTICS -->
+            <div id="tab-analytics" class="tab-content">
+                <div class="card">
+                    <h3>📊 Checkup & Revenue Analytics Graph</h3>
+                    <p style="margin-bottom: 15px; color: #64748b;">Hospital financial and checkup breakdown for recent periods:</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; text-align: center;">
+                            <h4 style="color: var(--secondary-color); margin-bottom: 10px;">Last 30 Days Summary</h4>
+                            <p style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="graph-30days-rev">₹0</p>
+                            <p style="font-size: 14px; color: #64748b; margin-top: 5px;" id="graph-30days-count">0 Checkups recorded</p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; text-align: center;">
+                            <h4 style="color: var(--secondary-color); margin-bottom: 10px;">Last 1 Year Summary</h4>
+                            <p style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="graph-1year-rev">₹0</p>
+                            <p style="font-size: 14px; color: #64748b; margin-top: 5px;" id="graph-1year-count">0 Checkups recorded</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: STAFF & HOSPITAL -->
+            <div id="tab-staff" class="tab-content">
+                <div class="card">
+                    <h3>➕ Add New Hospital Staff</h3>
+                    <form id="staff-form" onsubmit="addStaff(event)">
+                        <div class="form-group">
+                            <label>Staff Name</label>
+                            <input type="text" id="s-name" required placeholder="Staff Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Staff Mobile Number</label>
+                            <input type="text" id="s-mobile" required placeholder="Mobile Number">
+                        </div>
+                        <button type="submit" class="btn">Register Staff Member</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>👨‍⚕️ Active Staff Directory & Removal</h3>
+                    <p style="margin-bottom: 15px; color: #64748b;">Aap yahan se kisi bhi staff ko jo kaam chhod chuke hain, unhein remove kar sakte hain:</p>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Staff Name & Mobile</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staff-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let adminPass = localStorage.getItem("naira_pass") || "6299824039";
+
+        window.onload = function() {
+            if (localStorage.getItem("naira_logged") === "true") {
+                showDashboard();
+            }
+            setDefaultDateTime();
+        };
+
+        function setDefaultDateTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById("p-entry-date").value = now.toISOString().slice(0,16);
+        }
+
+        function togglePassword(id, el) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                el.innerText = "🙈";
+            } else {
+                input.type = "password";
+                el.innerText = "👁️";
+            }
+        }
+
+        function handleLogin() {
+            const name = document.getElementById("login-name").value.trim();
+            const pass = document.getElementById("login-pass").value.trim();
+            if (name === "NAIRA" && pass === adminPass) {
+                localStorage.setItem("naira_logged", "true");
+                showDashboard();
+            } else {
+                document.getElementById("login-error").innerText = "Invalid Name or Password!";
+            }
+        }
+
+        function showForgot() {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("forgot-section").style.display = "flex";
+        }
+
+        function showLogin() {
+            document.getElementById("forgot-section").style.display = "none";
+            document.getElementById("login-section").style.display = "flex";
+        }
+
+        function resetPassword() {
+            const name = document.getElementById("forgot-name").value.trim();
+            const mobile = document.getElementById("forgot-mobile").value.trim();
+            const newP = document.getElementById("new-pass").value.trim();
+            const msg = document.getElementById("forgot-msg");
+
+            if (name === "NAIRA" && mobile === "6299824039" && newP) {
+                adminPass = newP;
+                localStorage.setItem("naira_pass", newP);
+                msg.style.color = "green";
+                msg.innerText = "Password updated successfully! Please login.";
+                setTimeout(showLogin, 1500);
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "Invalid Admin Name or Registered Mobile Number (6299824039)!";
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("forgot-section").style.display = "none";
+            document.getElementById("dashboard-section").style.display = "block";
+            document.getElementById("welcome-admin").innerText = "Welcome, Admin: NAIRA (NAIRA HEALTH CARE)";
+            loadStaffDropdown();
+            loadData();
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("naira_logged");
+            document.getElementById("dashboard-section").style.display = "none";
+            document.getElementById("login-section").style.display = "flex";
+            document.getElementById("login-pass").value = "";
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function toggleAdmitDates() {
+            const status = document.getElementById("p-admit-status").value;
+            document.getElementById("admit-dates-box").style.display = (status === "Admit") ? "block" : "none";
+        }
+
+        function toggleTestInputs(testName) {
+            const chk = document.getElementById(`chk-${testName}`);
+            const inputsDiv = document.getElementById(`inputs-${testName}`);
+            inputsDiv.style.display = chk.checked ? "grid" : "none";
+        }
+
+        function checkPatientHistory() {
+            const nameInput = document.getElementById("p-name").value.trim().toLowerCase();
+            const alertBox = document.getElementById("patient-history-alert");
+            if (!nameInput) {
+                alertBox.style.display = "none";
+                return;
+            }
+
+            const patients = JSON.parse(localStorage.getItem("naira_patients")) || [];
+            const matchedPatient = patients.slice().reverse().find(p => p.name.trim().toLowerCase() === nameInput);
+
+            if (matchedPatient) {
+                const lastVisitTime = new Date(matchedPatient.entryDate || matchedPatient.timestamp).getTime();
+                const currentTime = new Date().getTime();
+                const diffDays = (currentTime - lastVisitTime) / (1000 * 60 * 60 * 24);
+
+                alertBox.style.display = "block";
+                if (diffDays <= 15) {
+                    alertBox.style.background = "#dcfce7";
+                    alertBox.style.color = "#166534";
+                    alertBox.innerText = `🟢 Re-visit within 15 Days! Last visit was ${Math.floor(diffDays)} days ago on ${matchedPatient.entryDate || 'Previous date'}. (Prescription Valid)`;
+                } else {
+                    alertBox.style.background = "#fee2e2";
+                    alertBox.style.color = "#991b1b";
+                    alertBox.innerText = `🔴 Prescription Expired! Last visit was ${Math.floor(diffDays)} days ago. Please collect fresh prescription bill.`;
+                }
+            } else {
+                alertBox.style.display = "block";
+                alertBox.style.background = "#e0f2fe";
+                alertBox.style.color = "#0369a1";
+                alertBox.innerText = `🔵 New Patient First Entry.`;
+            }
+        }
+
+        function addStaff(e) {
+            e.preventDefault();
+            const name = document.getElementById("s-name").value.trim();
+            const mobile = document.getElementById("s-mobile").value.trim();
+
+            let staffList = JSON.parse(localStorage.getItem("naira_staff_list")) || [];
+            staffList.push({ id: Date.now(), name: name, mobile: mobile });
+            localStorage.setItem("naira_staff_list", JSON.stringify(staffList));
+
+            document.getElementById("staff-form").reset();
+            loadStaffDropdown();
+            loadData();
+            alert("Staff added successfully!");
+        }
+
+        function removeStaff(id) {
+            if (confirm("Are you sure you want to remove this staff member?")) {
+                let staffList = JSON.parse(localStorage.getItem("naira_staff_list")) || [];
+                staffList = staffList.filter(s => s.id !== id);
+                localStorage.setItem("naira_staff_list", JSON.stringify(staffList));
+                loadStaffDropdown();
+                loadData();
+            }
+        }
+
+        function loadStaffDropdown() {
+            const staffList = JSON.parse(localStorage.getItem("naira_staff_list")) || [];
+            const select = document.getElementById("p-staff");
+            select.innerHTML = `<option value="">-- Select Active Staff --</option>`;
+            staffList.forEach(s => {
+                const opt = document.createElement("option");
+                opt.value = `${s.name} (${s.mobile})`;
+                opt.innerText = `${s.name} - ${s.mobile}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function savePatient(e) {
+            e.preventDefault();
+            const docInput = document.getElementById("p-documents");
+            const editId = document.getElementById("edit-patient-id").value;
+            
+            const processPatientData = (docUrls) => {
+                const testNames = ['blood', 'ultrasound', 'xray', 'ct', 'mri', 'ecg', 'urine'];
+                let testsData = {};
+                let testsTotalCost = 0;
+
+                testNames.forEach(t => {
+                    const chk = document.getElementById(`chk-${t}`);
+                    if (chk && chk.checked) {
+                        const loc = document.getElementById(`loc-${t}`).value || 'Main Lab';
+                        const cost = parseFloat(document.getElementById(`cost-${t}`).value) || 0;
+                        testsData[t] = { done: 'Yes', location: loc, cost: cost };
+                        testsTotalCost += cost;
+                    }
+                });
+
+                let patients = JSON.parse(localStorage.getItem("naira_patients")) || [];
+
+                if (editId) {
+                    let p = patients.find(item => item.id == editId);
+                    if (p) {
+                        p.name = document.getElementById("p-name").value;
+                        p.address = document.getElementById("p-address").value;
+                        if (docUrls && docUrls.length > 0) p.documents = docUrls;
+                        p.staff = document.getElementById("p-staff").value;
+                        p.status = document.getElementById("p-admit-status").value;
+                        p.entryDate = document.getElementById("p-entry-date").value;
+                        p.dateFrom = document.getElementById("p-date-from").value;
+                        p.dateTo = document.getElementById("p-date-to").value;
+                        p.bp = document.getElementById("v-bp").value || '-';
+                        p.pulse = document.getElementById("v-pulse").value || '-';
+                        p.spo2 = document.getElementById("v-spo2").value || '-';
+                        p.weight = document.getElementById("v-weight").value || '-';
+                        p.temp = document.getElementById("v-temp").value || '-';
+                        p.tests = testsData;
+                        p.testsTotalCost = testsTotalCost;
+                        p.doctor = document.getElementById("p-doctor").value;
+                        p.fees = parseFloat(document.getElementById("p-fees").value) || 0;
+                        p.med = parseFloat(document.getElementById("p-med").value) || 0;
+                        p.maint = parseFloat(document.getElementById("p-maint").value) || 0;
+                        p.summary = document.getElementById("p-summary").value;
+                    }
+                    alert("Patient record updated successfully!");
+                } else {
+                    const patient = {
+                        id: Date.now(),
+                        name: document.getElementById("p-name").value,
+                        address: document.getElementById("p-address").value,
+                        documents: docUrls || [],
+                        staff: document.getElementById("p-staff").value,
+                        status: document.getElementById("p-admit-status").value,
+                        entryDate: document.getElementById("p-entry-date").value,
+                        dateFrom: document.getElementById("p-date-from").value,
+                        dateTo: document.getElementById("p-date-to").value,
+                        bp: document.getElementById("v-bp").value || '-',
+                        pulse: document.getElementById("v-pulse").value || '-',
+                        spo2: document.getElementById("v-spo2").value || '-',
+                        weight: document.getElementById("v-weight").value || '-',
+                        temp: document.getElementById("v-temp").value || '-',
+                        tests: testsData,
+                        testsTotalCost: testsTotalCost,
+                        doctor: document.getElementById("p-doctor").value,
+                        fees: parseFloat(document.getElementById("p-fees").value) || 0,
+                        med: parseFloat(document.getElementById("p-med").value) || 0,
+                        maint: parseFloat(document.getElementById("p-maint").value) || 0,
+                        summary: document.getElementById("p-summary").value,
+                        timestamp: Date.now()
+                    };
+                    patients.push(patient);
+                    alert("New visit & bill recorded successfully!");
+                }
+
+                localStorage.setItem("naira_patients", JSON.stringify(patients));
+                cancelEditMode();
+                loadData();
+            };
+
+            const existingDocs = editId ? (JSON.parse(localStorage.getItem("naira_patients")).find(p => p.id == editId)?.documents || []) : [];
+
+            if (docInput.files && docInput.files.length > 0) {
+                let readers = [];
+                let uploadedUrls = [];
+                let files = docInput.files;
+
+                for (let i = 0; i < files.length; i++) {
+                    let reader = new FileReader();
+                    readers.push(new Promise((resolve) => {
+                        reader.onload = function(e) {
+                            uploadedUrls.push(e.target.result);
+                            resolve();
+                        };
+                        reader.readAsDataURL(files[i]);
+                    }));
+                }
+
+                Promise.all(readers).then(() => {
+                    processPatientData(uploadedUrls);
+                });
+            } else {
+                processPatientData(existingDocs);
+            }
+        }
+
+        function editPatient(id) {
+            const patients = JSON.parse(localStorage.getItem("naira_patients")) || [];
+            const p = patients.find(item => item.id == id);
+            if (!p) return;
+
+            document.getElementById("edit-patient-id").value = p.id;
+            document.getElementById("p-name").value = p.name;
+            document.getElementById("p-address").value = p.address;
+            document.getElementById("p-entry-date").value = p.entryDate || '';
+            document.getElementById("p-staff").value = p.staff;
+            document.getElementById("p-admit-status").value = p.status;
+            toggleAdmitDates();
+            document.getElementById("p-date-from").value = p.dateFrom || '';
+            document.getElementById("p-date-to").value = p.dateTo || '';
+            document.getElementById("v-bp").value = p.bp;
+            document.getElementById("v-pulse").value = p.pulse;
+            document.getElementById("v-spo2").value = p.spo2;
+            document.getElementById("v-weight").value = p.weight;
+            document.getElementById("v-temp").value = p.temp;
+            document.getElementById("p-doctor").value = p.doctor;
+            document.getElementById("p-fees").value = p.fees;
+            document.getElementById("p-med").value = p.med;
+            document.getElementById("p-maint").value = p.maint;
+            document.getElementById("p-summary").value = p.summary;
+
+            const testNames = ['blood', 'ultrasound', 'xray', 'ct', 'mri', 'ecg', 'urine'];
+            testNames.forEach(t => {
+                const chk = document.getElementById(`chk-${t}`);
+                const inputsDiv = document.getElementById(`inputs-${t}`);
+                if (p.tests && p.tests[t]) {
+                    chk.checked = true;
+                    inputsDiv.style.display = "grid";
+                    document.getElementById(`loc-${t}`).value = p.tests[t].location || '';
+                    document.getElementById(`cost-${t}`).value = p.tests[t].cost || 0;
+                } else {
+                    chk.checked = false;
+                    inputsDiv.style.display = "none";
+                }
+            });
+
+            document.getElementById("form-title").innerText = "Edit Patient Visit / Bill";
+            document.getElementById("form-submit-btn").innerText = "Update Record";
+            document.getElementById("form-cancel-btn").style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEditMode() {
+            document.getElementById("patient-form").reset();
+            document.getElementById("edit-patient-id").value = "";
+            document.getElementById("form-title").innerText = "New Patient Entry";
+            document.getElementById("form-submit-btn").innerText = "Save & Print Record";
+            document.getElementById("form-cancel-btn").style.display = "none";
+            document.getElementById("admit-dates-box").style.display = "none";
+            document.getElementById("patient-history-alert").style.display = "none";
+            setDefaultDateTime();
+        }
+
+        function deletePatient(id) {
+            if (confirm("Are you sure you want to completely remove this patient record?")) {
+                let patients = JSON.parse(localStorage.getItem("naira_patients")) || [];
+                patients = patients.filter(p => p.id !== id);
+                localStorage.setItem("naira_patients", JSON.stringify(patients));
+                loadData();
+            }
+        }
+
+        function loadData() {
+            const patients = JSON.parse(localStorage.getItem("naira_patients")) || [];
+            const staffList = JSON.parse(localStorage.getItem("naira_staff_list")) || [];
+            
+            const admitTbody = document.getElementById("admitted-table-body");
+            const nonAdmitTbody = document.getElementById("non-admitted-table-body");
+            const staffTbody = document.getElementById("staff-table-body");
+
+            admitTbody.innerHTML = "";
+            nonAdmitTbody.innerHTML = "";
+            staffTbody.innerHTML = "";
+
+            let totalCount = patients.length;
+            let admitCount = 0;
+            let nonAdmitCount = 0;
+            let totalRev = 0;
+
+            let rev30Days = 0;
+            let count30Days = 0;
+            let rev1Year = 0;
+            let count1Year = 0;
+
+            const now = new Date().getTime();
+            const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+            const oneYearMs = 365 * 24 * 60 * 60 * 1000;
+
+            if (patients.length === 0) {
+                admitTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b;">No admitted records found.</td></tr>`;
+                nonAdmitTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b;">No OPD records found.</td></tr>`;
+            }
+
+            patients.forEach(p => {
+                let pTotalCost = p.fees + p.med + p.maint + (p.testsTotalCost || 0);
+                totalRev += pTotalCost;
+                
+                const visitTime = new Date(p.entryDate || p.timestamp).getTime();
+                if (now - visitTime <= thirtyDaysMs) {
+                    rev30Days += pTotalCost;
+                    count30Days++;
+                }
+                if (now - visitTime <= oneYearMs) {
+                    rev1Year += pTotalCost;
+                    count1Year++;
+                }
+
+                const diffDays = (now - visitTime) / (1000 * 60 * 60 * 24);
+                let expiryBadge = "";
+                if (diffDays <= 15) {
+                    expiryBadge = `<span class="badge-valid">🟢 Valid (${Math.floor(15 - diffDays)}d left)</span>`;
+                } else {
+                    expiryBadge = `<span class="badge-expired">🔴 Expired (15+ Days)</span>`;
+                }
+
+                let testsSummaryStr = "";
+                if (p.tests) {
+                    for (let key in p.tests) {
+                        let tObj = p.tests[key];
+                        testsSummaryStr += `<b>${key.toUpperCase()}</b>: ₹${tObj.cost} (${tObj.location})<br>`;
+                    }
+                }
+                if (!testsSummaryStr) testsSummaryStr = "No tests recorded";
+
+                const expenseText = `Fees: ₹${p.fees}, Med: ₹${p.med}, Maint: ₹${p.maint}, Tests/Blood: ₹${p.testsTotalCost || 0}`;
+                
+                let docsHtml = `<div class="doc-thumb-container">`;
+                if (p.documents && p.documents.length > 0) {
+                    p.documents.forEach((docUrl, idx) => {
+                        docsHtml += `<img src="${docUrl}" class="prescription-img-thumb" onclick="viewDocument('${docUrl}')" title="Doc ${idx+1}">`;
+                    });
+                } else {
+                    docsHtml += `<small style="color:#aaa;">No Docs</small>`;
+                }
+                docsHtml += `</div>`;
+
+                if (p.status === "Admit") {
+                    admitCount++;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${docsHtml}</td>
+                        <td><strong>${p.name}</strong><br><small>${p.address}</small></td>
+                        <td><small><b>Date:</b> ${p.entryDate || 'N/A'}</small><br>${expiryBadge}</td>
+                        <td>${p.doctor}<br><small>Staff: ${p.staff}</small></td>
+                        <td><small>${testsSummaryStr}</small></td>
+                        <td><small>${expenseText}<br><b>Total:</b> ₹${pTotalCost}</small></td>
+                        <td class="action-btns">
+                            <button class="btn-print" onclick="printSlip(${p.id})">Slip</button>
+                            <button class="btn-visit" onclick="quickNewVisit('${p.name}', '${p.address}')">+ New Bill</button>
+                            <button class="btn-edit" onclick="editPatient(${p.id})">Edit</button>
+                            <button class="btn-delete" onclick="deletePatient(${p.id})">Del</button>
+                        </td>
+                    `;
+                    admitTbody.appendChild(tr);
+                } else {
+                    nonAdmitCount++;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${docsHtml}</td>
+                        <td><strong>${p.name}</strong><br><small>${p.address}</small></td>
+                        <td><small><b>Date:</b> ${p.entryDate || 'N/A'}</small><br>${expiryBadge}</td>
+                        <td>${p.doctor}<br><small>Staff: ${p.staff}</small></td>
+                        <td><small>${testsSummaryStr}</small></td>
+                        <td><small>${expenseText}<br><b>Total:</b> ₹${pTotalCost}</small></td>
+                        <td class="action-btns">
+                            <button class="btn-print" onclick="printSlip(${p.id})">Slip</button>
+                            <button class="btn-visit" onclick="quickNewVisit('${p.name}', '${p.address}')">+ New Bill</button>
+                            <button class="btn-edit" onclick="editPatient(${p.id})">Edit</button>
+                            <button class="btn-delete" onclick="deletePatient(${p.id})">Del</button>
+                        </td>
+                    `;
+                    nonAdmitTbody.appendChild(tr);
+                }
+            });
+
+            staffList.forEach(s => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${s.name}</strong><br><small>Mobile: ${s.mobile}</small></td>
+                    <td><button class="btn-delete" onclick="removeStaff(${s.id})">Remove Staff</button></td>
+                `;
+                staffTbody.appendChild(tr);
+            });
+            if (staffList.length === 0) {
+                staffTbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#64748b;">No staff added yet.</td></tr>`;
+            }
+
+            document.getElementById("stat-total").innerText = totalCount;
+            document.getElementById("stat-admit").innerText = admitCount;
+            document.getElementById("stat-nonadmit").innerText = nonAdmitCount;
+            document.getElementById("stat-rev").innerText = `₹${totalRev}`;
+
+            document.getElementById("graph-30days-rev").innerText = `₹${rev30Days}`;
+            document.getElementById("graph-30days-count").innerText = `${count30Days} Checkups recorded`;
+            document.getElementById("graph-1year-rev").innerText = `₹${rev1Year}`;
+            document.getElementById("graph-1year-count").innerText = `${count1Year} Checkups recorded`;
+        }
+
+        function viewDocument(url) {
+            const w = window.open('');
+            w.document.write(`<img src="${url}" style="max-width:100%;">`);
+        }
+
+        function quickNewVisit(name, address) {
+            cancelEditMode();
+            document.getElementById("p-name").value = name;
+            document.getElementById("p-address").value = address;
+            checkPatientHistory();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function printSlip(id) {
+            const patients = JSON.parse(localStorage.getItem("naira_patients")) || [];
+            const p = patients.find(item => item.id === id);
+            if (!p) return;
+
+            let testsHtml = "";
+            if (p.tests) {
+                for (let key in p.tests) {
+                    let t = p.tests[key];
+                    testsHtml += `<li><b>${key.toUpperCase()}</b> - Location: ${t.location} | Cost: ₹${t.cost}</li>`;
+                }
+            }
+            if(!testsHtml) testsHtml = "<li>No tests recorded</li>";
+
+            let grandTotal = p.fees + p.med + p.maint + (p.testsTotalCost || 0);
+
+            const slipWindow = window.open('', '', 'width=700,height=700');
+            slipWindow.document.write(`
+                <html>
+                <head><title>Patient Bill & Prescription - NAIRA HEALTH CARE</title></head>
+                <body style="font-family: Arial; padding: 20px;">
+                    <div style="text-align:center; border-bottom: 2px solid #0284c7; padding-bottom: 10px;">
+                        <h2>NAIRA HEALTH CARE HOSPITAL</h2>
+                        <p>OPD Prescription & Bill Slip (15-Day Valid)</p>
+                    </div>
+                    <h3>Patient Details:</h3>
+                    <p><b>Name:</b> ${p.name} | <b>Address:</b> ${p.address}</p>
+                    <p><b>Visit Date:</b> ${p.entryDate || 'N/A'} | <b>Status:</b> ${p.status}</p>
+                    <p><b>Consulting Doctor:</b> ${p.doctor} | <b>Staff:</b> ${p.staff}</p>
+                    <hr>
+                    <h3>Vitals:</h3>
+                    <p><b>BP:</b> ${p.bp} | <b>Pulse:</b> ${p.pulse} | <b>SpO2:</b> ${p.spo2} | <b>Weight:</b> ${p.weight} | <b>Temp:</b> ${p.temp}</p>
+                    <hr>
+                    <h3>Tests & Blood Test Record:</h3>
+                    <ul>${testsHtml}</ul>
+                    <p><b>Tests & Blood Total Cost:</b> ₹${p.testsTotalCost || 0}</p>
+                    <hr>
+                    <h3>Bill Breakdown:</h3>
+                    <p><b>Doctor Fees:</b> ₹${p.fees} | <b>Medicine:</b> ₹${p.med} | <b>Maintenance:</b> ₹${p.maint}</p>
+                    <p><b>Grand Total:</b> ₹${grandTotal}</p>
+                    <p><b>Treatment Notes:</b> ${p.summary || 'N/A'}</p>
+                    <p style="font-size: 11px; margin-top: 15px; color: #555;">*Note: This prescription is valid for free/re-visit checkup up to 15 days from the visit date.</p>
+                    <br><br>
+                    <div style="float: right; text-align: center;">
+                        <p>____________________</p>
+                        <p>Authorized Signature</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            slipWindow.document.close();
+            slipWindow.print();
+        }
+    </script>
+</body>
+</html>
